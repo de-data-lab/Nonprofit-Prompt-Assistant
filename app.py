@@ -35,6 +35,14 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+st.html(
+    """
+       <script>
+        window.top.document.querySelectorAll([href*="streamlit.io"]).forEach(e => e.setAttribute("style", "display: none;"));
+      </script>
+    """
+)
 # --- Sidebar Styling and Logo ---
 
 with st.sidebar:
@@ -224,3 +232,10 @@ elif st.session_state.page == "main":
             st.session_state.pop(key, None)
         st.session_state.page = "main"
         st.rerun()
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
