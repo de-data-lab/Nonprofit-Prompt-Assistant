@@ -16,21 +16,7 @@ supabase_key = st.secrets["supabase_key"]
 supabase: Client = create_client(supabase_url, supabase_key)
 print("Supabase client created successfully")
 
-# Simulated parsed data (replace with actual parsed data loading logic)
-# parsed_templates = {
-#     "Automate the Admin": {
-#         "Data entry between different systems (CRM to accounting)": {
-#             "filename": "data_entry_between_different_systems_crm_to_accounting_high.html",
-#             "prompt_text": "You are a Data Systems Integration Specialist with expertise in nonprofit financial and donor management systems. Your task is to help [ORGANIZATION_NAME] process and validate data transfers between their [SOURCE_SYSTEM] and [TARGET_SYSTEM].",
-#             "variables": ["ORGANIZATION_NAME", "SOURCE_SYSTEM", "TARGET_SYSTEM"],
-#             "metadata": {
-#                 "complexity": "High",
-#                 "template_type": "Repetitive Data Processing",
-#             },
-#         }
-#     }
-# }
-#
+
 print("Initializing Streamlit app...")
 
 # --- Load Data ---
@@ -49,29 +35,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
-# --- Logo Display ---
-# make color of sidebar #0057b8
-# st.sidebar.markdown(
-#     """
-#     <style>
-#         .css-1d391kg {background-color: #0057b8;}
-#     </style>
-# """,
-#     unsafe_allow_html=True,
-# )
-
-# st.markdown(
-#     """
-# <style>
-# .sidebar .sidebar-content {
-#     background-image: linear-gradient(#0057b8,#0057b8);
-#     color: white;
-# }
-# </style>
-# """,
-#     unsafe_allow_html=True,
-# )
+# --- Sidebar Styling and Logo ---
 
 with st.sidebar:
 
@@ -197,24 +161,6 @@ elif st.session_state.page == "main":
     st.subheader("Customize Your Prompt")
     col1, col2 = st.columns(2)
 
-    # with col1:
-    #     st.markdown("### Fill in the blanks")
-    #     for var in variables:
-    #         helper_text = (
-    #             f"Enter your {var.replace('_', ' ').lower()} here."  # Placeholder
-    #         )
-    #         user_input = st.text_input(
-    #             var.replace("_", " ").title(), help=helper_text, key=var
-    #         )
-    #         st.session_state.inputs[var] = user_input
-
-    # with col2:
-    #     final_prompt = prompt_text
-    #     for var, value in st.session_state.inputs.items():
-    #         final_prompt = final_prompt.replace(f"[{var}]", value)
-    #     st.markdown("### Live Prompt Preview")
-    #     st.text_area("Your customized prompt", final_prompt, height=400)
-
     with col1:
         st.markdown("### Fill in the blanks")
         for var in variables:
@@ -248,20 +194,6 @@ elif st.session_state.page == "main":
 
     if st.button("Submit"):
         st.success("Your response has been recorded.")
-        # response = {
-        #     "timestamp": datetime.now().isoformat(),
-        #     "organization": org_name,
-        #     "email": email,
-        #     "category": selected_category,
-        #     "template": selected_template,
-        #     "topic": selected_topic,
-        #     "prompt": prompt_text,
-        #     "final_prompt": final_prompt,
-        #     "helpful": helpful,
-        #     "feedback": feedback,
-        # }
-        # with open("user_responses.json", "a", encoding="utf-8") as f:
-        #     f.write(json.dumps(response) + "\n")
 
         response = {
             "timestamp": datetime.now().isoformat(),
@@ -292,86 +224,3 @@ elif st.session_state.page == "main":
             st.session_state.pop(key, None)
         st.session_state.page = "main"
         st.rerun()
-
-    # st.subheader("Fill in the blanks")
-
-    # # id for each variable, create a text input field
-    # id_num = 0
-
-    # for var in variables:
-    #     user_input = st.text_input(
-    #         f"{var.replace('_', ' ').title()}", key=var + str(id_num)
-    #     )
-    #     st.session_state.inputs[var] = user_input
-    #     id_num += 1
-
-    # # Step 6: Finalized Prompt
-    # final_prompt = prompt_text
-    # for var, value in st.session_state.inputs.items():
-    #     final_prompt = final_prompt.replace(f"[{var}]", value)
-
-    # st.subheader("Finalized Prompt")
-    # st.text_area("Your customized prompt", final_prompt, height=400)
-
-    # if st.button("Copy to Clipboard"):
-    #     pyperclip.copy(final_prompt)
-    #     st.success("Prompt copied to clipboard!")
-
-    # # Step 7: Feedback Collection
-    # email = st.text_input("Your Email", key="email")
-    # helpful = st.radio("Did this prompt help you?", ["Yes", "No"])
-    # feedback = st.text_area("How did it help or not help you?")
-
-    # # Step 8: Submit Button
-    # if st.button("Submit"):
-    #     st.success("Your response has been recorded.")
-    #     st.write("Organization:", org_name)
-    #     st.write("Email:", email)
-    #     st.write("Category:", selected_category)
-    #     st.write("Template:", selected_template)
-    #     st.write("Topic:", selected_topic)
-    #     st.write("Prompt:", prompt_text)
-    #     st.write("Final Prompt:", final_prompt)
-    #     st.write("Helpful:", helpful)
-    #     st.write("Feedback:", feedback)
-
-    #     # save feedback to single user response json file
-    #     response = {
-    #         "timestamp": datetime.now().isoformat(),
-    #         "organization": org_name,
-    #         "email": email,
-    #         "category": selected_category,
-    #         "template": selected_template,
-    #         "topic": selected_topic,
-    #         "prompt": prompt_text,
-    #         "final_prompt": final_prompt,
-    #         "helpful": helpful,
-    #         "feedback": feedback,
-    #     }
-    #     with open("user_responses.json", "a", encoding="utf-8") as f:
-    #         f.write(json.dumps(response) + "\n")
-
-    # # Step 9: Reset Button
-    # if st.button("Reset and Start Over"):
-    #     duration = time.time() - st.session_state.start_time
-    #     st.write(f"Session duration: {duration:.2f} seconds")
-    #     st.write(f"Last screen: {st.session_state.selected_topic}")
-    #     st.write("Captured inputs:", st.session_state.inputs)
-    #     for key in ["start_time", "selected_topic", "selected_topic", "inputs"]:
-    #         st.session_state.pop(key, None)
-
-    #     st.rerun()
-
-    # clear all other session state variables except organization_name
-    # for key in list(st.session_state.keys()):
-    #     if key not in ["organization_name"]:
-    #         st.session_state.pop(key, None)
-    # st.rerun()
-
-#     duration = time.time() - st.session_state.start_time
-#     st.write(f"Session duration: {duration:.2f} seconds")
-#     st.write("Captured inputs:", st.session_state.inputs)
-#     for key in ["start_time", "selected_topic", "selected_prompt", "inputs"]:
-#         st.session_state.pop(key, None)
-#     st.experimental_rerun()
-# # Note: In a real application, you would save the feedback to a database or file.
