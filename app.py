@@ -280,7 +280,7 @@ elif st.session_state.page == "main":
     )
 
     if st.button("Submit"):
-        st.success("Your response has been recorded.")
+        # st.success("Your response has been recorded.")
 
         # Compile all responses
         response = {
@@ -311,7 +311,9 @@ elif st.session_state.page == "main":
         # st.write(landing_response)  # For debugging; remove in production
         try:
             supabase.table("responses").insert(response).execute()
-            st.success("Your Supabase response has been saved successfully!")
+            # st.success("Your Supabase response has been saved successfully!")
+            st.success("Your response has been sent to TechImpact. Thank You!!!")
+
         except Exception as e:
             st.error(f"Error saving response in Supabase: {e}")
 
