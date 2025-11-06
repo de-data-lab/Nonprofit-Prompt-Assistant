@@ -129,6 +129,7 @@ if st.session_state.page == "landing":
         )
         role = st.text_input("Your Role", placeholder="e.g., Development Manager")
         submit = st.form_submit_button("Continue")
+        # reset = st.form_submit_button("Reset")
 
     if submit:
         errors = []
@@ -171,11 +172,40 @@ if st.session_state.page == "landing":
 
             st.session_state.page = "main"
             st.rerun()
+    # if reset:
+    #     st.session_state.contact = {"email": "", "org": "", "role": ""}
+    #     st.session_state.organization_name = ""
+    #     st.success("Contact information reset.")
 
 # --- Main Application ---
 elif st.session_state.page == "main":
+
+    # clear session state except contact info and start_time
+    var_list = [
+        "selected_category",
+        "selected_template",
+        "selected_topic",
+        "inputs",
+        "difficulty",
+        "difficulty_more",
+        "hours_saved",
+        "frequency",
+        "desired_integrations",
+        # not resetting contact info or start_time
+    ]
+    st.write("Clearing Session...")
+
+    for key in var_list:
+        # st.session_state.pop(key, None) # works as is
+        if key == "inputs":
+            st.session_state[key] = {}
+
+        else:
+            st.session_state[key] = ""
+
     st.title("Nonprofit Prompt Assistant")
 
+    # with st.form("prompt_form", clear_on_submit=True):
     # Step 1: Category Selection
     st.subheader("Choose the task where you need help")
     categories = list(
@@ -231,6 +261,12 @@ elif st.session_state.page == "main":
             unsafe_allow_html=True,
         )
 
+        # submit_prompt = st.form_submit_button("Copy Prompt to Clipboard")
+
+        # if submit_prompt:
+        #     pyperclip.copy(final_prompt)
+        #     st.success("Prompt copied to clipboard!")
+
     if st.button("Copy to Clipboard"):
         pyperclip.copy(final_prompt)
         st.success("Prompt copied to clipboard!")
@@ -238,107 +274,126 @@ elif st.session_state.page == "main":
     # --- Feedback Section (Expanded) ---
     st.subheader("We'd love your feedback")
 
-    likert_options = [
-        "Very easy",
-        "Easy",
-        "Neutral",
-        "Difficult",
-        "Very difficult",
-    ]
-    difficulty = st.select_slider(
-        "Was this tool difficult to use?", options=likert_options, value="Neutral"
-    )
-    difficulty_more = st.text_area(
-        "Optional: Tell us more.",
-        # key="difficulty_more",
-        placeholder="What worked well? What could be improved?",
-    )
+    with st.expander("Why feedback matters"):
+        st.markdown(
+            """
+        Your feedback helps us improve the Nonprofit Prompt Assistant to better serve your needs. Please take a moment to share your thoughts on the tool's usability and effectiveness.
+        """
+        )
 
-    hours_saved = st.number_input(
-        "If you did this task manually without a prompt, about how many hours would it have taken?",
-        min_value=0.0,
-        step=0.5,
-        help="Use your best estimate.",
-        value=0.0,
-    )
+    with st.form("feedback_form", clear_on_submit=True):
 
-    frequency = st.selectbox(
-        "How frequently do you execute this task?",
-        [
-            "Daily",
-            "Multiple times per week",
-            "Weekly",
-            "Monthly",
-            "Quarterly",
-            "Ad hoc",
-        ],
-    )
-
-    desired_integrations = st.text_area(
-        "Are there tools or data sources you wish you could connect to the prompt for a better result? If so, which ones?",
-        placeholder="e.g., Salesforce, Mailchimp, Google Sheets, internal database, etc.",
-    )
-
-    if st.button("Submit"):
-        # st.success("Your response has been recorded.")
-
-        # Compile all responses
-        response = {
-            "timestamp": datetime.now().isoformat(),
-            "organization": st.session_state.contact.get("org"),
-            "email": st.session_state.contact.get("email"),
-            "role": st.session_state.contact.get("role"),
-            "category": selected_category,
-            "template": selected_template,
-            "topic": selected_topic,
-            "prompt": prompt_text,
-            "final_prompt": final_prompt,
-            # Feedback extras
-            "difficulty_likert": difficulty,
-            "difficulty_comments": difficulty_more,
-            "hours_without_prompt": hours_saved,
-            "task_frequency": frequency,
-            "desired_integrations": desired_integrations,
-            "time_taken_seconds": (
-                time.time() - st.session_state.start_time
-                if st.session_state.start_time
-                else None
-            ),
-        }
-        # update response with the landing_response info
-        # response.update(landing_response)
-        # st.write(response)  # For debugging; remove in production
-        # st.write(landing_response)  # For debugging; remove in production
-        try:
-            supabase.table("responses").insert(response).execute()
-            # st.success("Your Supabase response has been saved successfully!")
-            st.success("Your response has been sent to TechImpact. Thank You!!!")
-
-        except Exception as e:
-            st.error(f"Error saving response in Supabase: {e}")
-
-    if st.button("Reset and Start Over"):  # this part needs more testing and work
-        var_list = [
-            "selected_category",
-            "selected_template",
-            "selected_topic",
-            "inputs",
-            "difficulty",
-            "difficulty_more",
-            "hours_saved",
-            "frequency",
-            "desired_integrations",
-            # not resetting contact info or start_time
+        likert_options = [
+            "Very easy",
+            "Easy",
+            "Neutral",
+            "Difficult",
+            "Very difficult",
         ]
-        st.write("Resetting state...")
-        for key in var_list:
-            # st.session_state.pop(key, None) # works as is
-            if key == "inputs":
-                st.session_state[key] = {}
+        difficulty = st.select_slider(
+            "Was this tool difficult to use?", options=likert_options, value="Neutral"
+        )
+        difficulty_more = st.text_area(
+            "Optional: Tell us more.",
+            # key="difficulty_more",
+            placeholder="What worked well? What could be improved?",
+        )
 
-            else:
-                st.session_state[key] = ""
-        st.session_state.page = "main"
-        st.success("State has been reset.")
-        print("State reset, rerunning app...")
-        st.rerun()
+        hours_saved = st.number_input(
+            "If you did this task manually without a prompt, about how many hours would it have taken?",
+            min_value=0.0,
+            step=0.5,
+            help="Use your best estimate.",
+            value=0.0,
+        )
+
+        frequency = st.selectbox(
+            "How frequently do you execute this task?",
+            [
+                "Daily",
+                "Multiple times per week",
+                "Weekly",
+                "Monthly",
+                "Quarterly",
+                "Ad hoc",
+            ],
+        )
+
+        desired_integrations = st.text_area(
+            "Are there tools or data sources you wish you could connect to the prompt for a better result? If so, which ones?",
+            placeholder="e.g., Salesforce, Mailchimp, Google Sheets, internal database, etc.",
+        )
+        submit = st.form_submit_button("Submit Feedback")
+        reset = st.form_submit_button("Reset")  # Reset Feedback
+
+        # if st.button("Submit"):
+        if submit:
+            # st.success("Your response has been recorded.")
+
+            # Compile all responses
+            response = {
+                "timestamp": datetime.now().isoformat(),
+                "organization": st.session_state.contact.get("org"),
+                "email": st.session_state.contact.get("email"),
+                "role": st.session_state.contact.get("role"),
+                "category": selected_category,
+                "template": selected_template,
+                "topic": selected_topic,
+                "prompt": prompt_text,
+                "final_prompt": final_prompt,
+                # Feedback extras
+                "difficulty_likert": difficulty,
+                "difficulty_comments": difficulty_more,
+                "hours_without_prompt": hours_saved,
+                "task_frequency": frequency,
+                "desired_integrations": desired_integrations,
+                "time_taken_seconds": (
+                    time.time() - st.session_state.start_time
+                    if st.session_state.start_time
+                    else None
+                ),
+            }
+            # update response with the landing_response info
+            # response.update(landing_response)
+            # st.write(response)  # For debugging; remove in production
+            # st.write(landing_response)  # For debugging; remove in production
+            try:
+                supabase.table("responses").insert(response).execute()
+                # st.success("Your Supabase response has been saved successfully!")
+                st.success("Your response has been sent to TechImpact. Thank You!!!")
+
+            except Exception as e:
+                st.error(f"Error saving response in Supabase: {e}")
+
+        if reset:
+            # if st.button("Reset and Start Over"):  # this part needs more testing and work
+
+            var_list = [
+                "selected_category",
+                "selected_template",
+                "selected_topic",
+                "inputs",
+                "difficulty",
+                "difficulty_more",
+                "hours_saved",
+                "frequency",
+                "desired_integrations",
+                # not resetting contact info or start_time
+            ]
+            st.write("Resetting state...")
+            for key in var_list:
+                # st.session_state.pop(key, None) # works as is
+                if key == "inputs":
+                    st.session_state[key] = {}
+
+                else:
+                    st.session_state[key] = ""
+
+            st.session_state.page = "main"
+            st.success("State has been reset.")
+            print("State reset, rerunning app...")
+            print("Session state after reset:", st.session_state)
+            # st.session_state[selected_category] = "Marketing"
+            # st.session_state[selected_template] = "Quality assessment scoring"
+            # st.session_state[selected_topic] = "Marketing material effectiveness review"
+            st.rerun()
