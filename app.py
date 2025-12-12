@@ -18,7 +18,7 @@ print("Supabase client created successfully")
 print("Initializing Streamlit app...")
 
 # --- Load Data ---
-with open("all_prompts.json", "r", encoding="utf-8") as f:
+with open("all_prompts_with_ids.json", "r", encoding="utf-8") as f:
     parsed_templates = json.load(f)
     prompt_df = pd.DataFrame(parsed_templates)
     prompt_df = prompt_df[
@@ -238,6 +238,7 @@ elif st.session_state.page == "main":
     chosen_prompt = filtered_df[filtered_df["topic"] == selected_topic]
     prompt_text = chosen_prompt["prompt_text"].values[0]
     variables = chosen_prompt["variables"].values[0]
+    prompt_unique_id = chosen_prompt["prompt_id"].values[0]
 
     st.subheader("Customize Your Prompt")
     col1, col2 = st.columns(2)
@@ -341,6 +342,7 @@ elif st.session_state.page == "main":
                 "topic": selected_topic,
                 "prompt": prompt_text,
                 "final_prompt": final_prompt,
+                "prompt_id": str(prompt_unique_id),  # new
                 # Feedback extras
                 "difficulty_likert": difficulty,
                 "difficulty_comments": difficulty_more,
