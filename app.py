@@ -18,7 +18,7 @@ print("Supabase client created successfully")
 print("Initializing Streamlit app...")
 
 # --- Load Data ---
-with open("all_prompts_with_ids.json", "r", encoding="utf-8") as f:
+with open("all_prompts.json", "r", encoding="utf-8") as f:
     parsed_templates = json.load(f)
     prompt_df = pd.DataFrame(parsed_templates)
     prompt_df = prompt_df[
