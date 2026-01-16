@@ -2,3 +2,5 @@ streamlit
 supabase
 pyperclip
 pandas
+PyQt4
+gtk
