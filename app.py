@@ -7,6 +7,11 @@ import pandas as pd
 import pyperclip
 from datetime import datetime
 from supabase import create_client, Client
+from subprocess import call
+
+
+call("sudo apt-get install xclip", shell=True)
+
 
 print("Supbase imported successfully")
 # Initialize Supabase client
