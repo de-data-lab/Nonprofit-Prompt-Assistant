@@ -279,6 +279,7 @@ elif st.session_state.page == "main":
     #     st_copy_to_clipboard(final_prompt)
     #     st.success("Prompt copied to clipboard!")
 
+    st.subheader("Copy to Clipboard with the button below")
     if st_copy_to_clipboard(final_prompt):
         # pyperclip.copy(final_prompt)
         # st_copy_to_clipboard(final_prompt)
