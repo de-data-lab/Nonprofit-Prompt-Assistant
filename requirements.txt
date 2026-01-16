@@ -2,3 +2,4 @@ streamlit
 supabase
 pyperclip
 pandas
+st-copy-to-clipboard

@@ -8,9 +8,10 @@ import pyperclip
 from datetime import datetime
 from supabase import create_client, Client
 from subprocess import call
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 
-call("sudo apt-get install xclip", shell=True)
+# call("sudo apt-get install xclip", shell=True)
 
 
 print("Supbase imported successfully")
@@ -274,7 +275,8 @@ elif st.session_state.page == "main":
         #     st.success("Prompt copied to clipboard!")
 
     if st.button("Copy to Clipboard"):
-        pyperclip.copy(final_prompt)
+        # pyperclip.copy(final_prompt)
+        st_copy_to_clipboard(final_prompt)
         st.success("Prompt copied to clipboard!")
 
     # --- Feedback Section (Expanded) ---
